@@ -3,6 +3,8 @@ pipeline {
     environment {
         DOCKER_HUB_REPO = "atulkati100701/project-mlops"
         DOCKER_HUB_CREDENTIALS_ID = "docker-hub-credentials"
+        IMAGE_NAME = "atulkati100701/project-mlops"  // e.g., atulkatiyar/myapp
+        IMAGE_TAG  = "${env.BUILD_NUMBER}"
     }
     
     stages {
@@ -16,16 +18,26 @@ pipeline {
             steps {
                 script {
                     echo 'Building Docker image...'
-                    dockerImage = docker.build("${DOCKER_HUB_REPO}:v11")
+                    sh '''
+                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                    dcoker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
+                    '''
                 }
             }
         }
-        stage('Push Image to DockerHub') {
-            steps {
+        stage('Login and Push Image to DockerHub') {
+            steps{withCredentials([usernamePassword(
+                    credentialsId: 'docker-hub-credentials',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )])  {
                 script {
                     echo 'Pushing Docker image to DockerHub...'
-                    docker.withRegistry('https://registry.hub.docker.com' , "${DOCKER_HUB_CREDENTIALS_ID}") {
-                        dockerImage.push('latest')
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                        docker push ${IMAGE_NAME}:latest
+                    '''
                     }
                 }
             }
