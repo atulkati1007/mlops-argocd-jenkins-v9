@@ -42,6 +42,15 @@ pipeline {
                 }
             }
         }
+
+        stage('Cleanup') {
+            steps {
+                sh '''
+                    docker rmi ${IMAGE_NAME}:${IMAGE_TAG}
+                    docker rmi ${IMAGE_NAME}:latest
+                '''
+            }
+        }
         stage('Install Kubectl & ArgoCD CLI Setup') {
             steps {
                 sh '''
