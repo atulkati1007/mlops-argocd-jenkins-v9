@@ -1,0 +1,21 @@
+# Ignore everything by default
+*
+
+# Allow only these
+!application.py
+!requirements.txt
+!src/
+!artifacts/
+!static/
+!templates/
+
+# Always ignore
+.git
+.venv
+__pycache__
+*.pyc
+terraform
+tests
+pyproject.toml
+uv.lock
+setup.py
