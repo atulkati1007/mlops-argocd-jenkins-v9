@@ -1,15 +1,15 @@
 pipeline {
     agent any
     environment {
-        DOCKER_HUB_REPO = "dataguru97/gitops-project"
-        DOCKER_HUB_CREDENTIALS_ID = "gitops-dockerhub-token"
+        DOCKER_HUB_REPO = "atulkati100701/project-mlops"
+        DOCKER_HUB_CREDENTIALS_ID = "dckr_pat_KZMqahgZmRiXINq-p_FFwOWkb0s"
     }
     stages {
         stage('Checkout Github') {
             steps {
                 echo 'Checking out code from GitHub...'
-		        checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-token', url: 'https://github.com/data-guru0/GITOPS-PROJECT-9.git']])
-		    }
+		        checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[credentialsId: 'github-token', url: 'https://github.com/atulkati1007/mlops-argocd-jenkins-v9.git']])
+                 }
         }        
         stage('Build Docker Image') {
             steps {
@@ -41,18 +41,7 @@ pipeline {
                 '''
             }
         }
-        stage('Apply Kubernetes & Sync App with ArgoCD') {
-            steps {
-                script {
-                    kubeconfig(credentialsId: 'kubeconfig', serverUrl: 'https://192.168.49.2:8443') {
-                        sh '''
-                        argocd login 34.69.110.211:30751 --username admin --password $(kubectl get secret -n argocd argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d) --insecure
-                        argocd app sync gitopsapp
-                        '''
-                    }
-                }
-            }
-        }
+        
     }
 }
 
