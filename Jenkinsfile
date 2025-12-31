@@ -1,9 +1,6 @@
 pipeline {
     agent any
-    environment {
-        DOCKER_HUB_REPO = "atulkati100701/project-mlops"
-        DOCKER_HUB_CREDENTIALS_ID = "dckr_pat_KZMqahgZmRiXINq-p_FFwOWkb0s"
-    }
+    
     stages {
         stage('Checkout Github') {
             steps {
